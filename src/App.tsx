@@ -200,7 +200,16 @@ function App() {
       </form>
 
       <div className="transactions-list">
-        <h2>Transactions</h2>
+        <div className="transactions-header">
+          <span>Transaction ID</span>
+          <span>Created Date</span>
+          <span>Result</span>
+          <span>Type</span>
+          <span>Amount</span>
+          <span>Currency</span>
+          <span>Actions</span>
+        </div>
+        
         {Array.isArray(transactions) && transactions.map((transaction) => (
           <div 
             key={transaction.transactionId} 
@@ -215,22 +224,23 @@ function App() {
                 {transaction.result}
               </span>
               <span className="type">{transaction.transactionType}</span>
-              <span className={`amount ${transaction.transactionType.toLowerCase()}`}>
+              <span className="amount">
                 {transaction.transactionType === 'REFUND' ? '+' : '-'}
-                {transaction.amount.toFixed(2)} {transaction.currency}
+                {transaction.amount.toFixed(2)}
               </span>
-            </div>
-            <div className="transaction-actions">
-              <button 
-                onClick={() => editTransaction(transaction)}
-              >
-                Edit
-              </button>
-              <button 
-                onClick={() => deleteTransaction(transaction.transactionId)}
-              >
-                Delete
-              </button>
+              <span className="currency">{transaction.currency}</span>
+              <div className="transaction-actions">
+                <button 
+                  onClick={() => editTransaction(transaction)}
+                >
+                  Edit
+                </button>
+                <button 
+                  onClick={() => deleteTransaction(transaction.transactionId)}
+                >
+                  Delete
+                </button>
+              </div>
             </div>
           </div>
         ))}
