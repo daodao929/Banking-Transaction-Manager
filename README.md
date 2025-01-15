@@ -27,3 +27,25 @@ sh start_app.sh
 After running these commands, you can access the app at `http://localhost:3000`.
 
 Note: Make sure your API URL in the app is configured correctly to reach your backend service from the containerized environment.
+
+## Dependency Purposes
+### Production Dependencies
+- `react`: Core React library for building user interfaces
+- `react-dom`: React's DOM rendering functionality
+
+### Development Dependencies
+#### Build Tools
+- `vite`: Modern build tool and dev server with HMR support
+- `@vitejs/plugin-react-swc`: Fast React compiler for Vite
+
+#### TypeScript Support
+- `typescript`: TypeScript language support and compiler
+- `@types/react`: TypeScript definitions for React
+- `@types/react-dom`: TypeScript definitions for React DOM
+
+#### Code Quality
+- `eslint`: JavaScript/TypeScript linter
+- `eslint-plugin-react-hooks`: ESLint rules for React Hooks
+- `eslint-plugin-react-refresh`: Support for React Fast Refresh
+- `@eslint/js`: JavaScript-specific ESLint rules
+- `globals`: Global variable definitions for ESLint
