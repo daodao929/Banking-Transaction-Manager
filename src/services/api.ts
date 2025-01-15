@@ -1,16 +1,15 @@
 import { Transaction } from '../types';
-
-const API_BASE_URL = 'http://localhost:8080'; // Adjust this to your API URL
+import { BASE_URL } from '../config';
 
 export const api = {
   async getTransactions(): Promise<Transaction[]> {
-    const response = await fetch(`${API_BASE_URL}/transactions`);
+    const response = await fetch(`${BASE_URL}/transactions`);
     if (!response.ok) throw new Error('Failed to fetch transactions');
-    return response.json().content;
+    return response.json();
   },
 
   async createTransaction(transaction: Omit<Transaction, 'id' | 'date'>): Promise<Transaction> {
-    const response = await fetch(`${API_BASE_URL}/transactions`, {
+    const response = await fetch(`${BASE_URL}/transactions`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -22,7 +21,7 @@ export const api = {
   },
 
   async updateTransaction(id: number, transaction: Partial<Transaction>): Promise<Transaction> {
-    const response = await fetch(`${API_BASE_URL}/transactions/${id}`, {
+    const response = await fetch(`${BASE_URL}/transactions/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -33,10 +32,13 @@ export const api = {
     return response.json();
   },
 
-  async deleteTransaction(id: number): Promise<void> {
-    const response = await fetch(`${API_BASE_URL}/transactions/${id}`, {
+  async deleteTransaction(id: string) {
+    const response = await fetch(`${BASE_URL}/transactions/${id}`, {
       method: 'DELETE',
     });
-    if (!response.ok) throw new Error('Failed to delete transaction');
-  },
+    
+    if (!response.ok) {
+      throw new Error('Failed to delete transaction');
+    }
+  }
 }; 

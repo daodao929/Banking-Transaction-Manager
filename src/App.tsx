@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { api } from './services/api'
 import { Transaction, TransactionType, TransactionResult, PageResponse } from './types'
 import './App.css'
-import { v4 as uuidv4 } from 'uuid'
+import { BASE_URL } from './config'
 
 function App() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -26,7 +26,7 @@ function App() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`http://localhost:8080/transactions?page=${page}&size=10`);
+      const response = await fetch(`${BASE_URL}/transactions?page=${page}&size=10`);
       if (!response.ok) {
         throw new Error('Failed to fetch transactions');
       }
@@ -59,11 +59,11 @@ function App() {
         const queryParams = new URLSearchParams({
           amount: amount,
           currency: currency,
-          result: result
+          transactionResult: result
         }).toString();
 
         const response = await fetch(
-          `http://localhost:8080/transactions/${editingId}?${queryParams}`, 
+          `${BASE_URL}/transactions/${editingId}?${queryParams}`, 
           {
             method: 'PUT',
             headers: {
@@ -75,9 +75,13 @@ function App() {
         if (!response.ok) {
           throw new Error('Failed to update transaction');
         }
+
+        // Refresh data after successful update
+        fetchTransactions(currentPage);
+        setEditingId(null);
       } else {
         // Create new transaction
-        const response = await fetch('http://localhost:8080/transactions', {
+        const response = await fetch(`${BASE_URL}/transactions`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -117,7 +121,7 @@ function App() {
   const deleteTransaction = async (id: string) => {
     try {
       await api.deleteTransaction(id);
-      setTransactions(transactions.filter(t => t.transactionId !== id));
+      fetchTransactions(currentPage);
     } catch (err) {
       setError('Failed to delete transaction');
       console.error(err);
@@ -126,7 +130,7 @@ function App() {
 
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
-    fetchTransactions(pageNumber - 1);
+    fetchTransactions(Number(pageNumber) - 1);
   };
 
   const editTransaction = (transaction: Transaction) => {
