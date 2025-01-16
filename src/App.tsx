@@ -200,7 +200,6 @@ function App() {
               </span>
               <span className="type">{transaction.transactionType}</span>
               <span className="amount">
-                {transaction.transactionType === 'REFUND' ? '+' : '-'}
                 {transaction.amount.toFixed(2)}
               </span>
               <span className="currency">{transaction.currency}</span>
