@@ -1,5 +1,5 @@
 # Banking transaction management
-
+![screeshot for the app](image.png)
 ## Main features
 - View all transactions with pagination
 - Add a new transaction
