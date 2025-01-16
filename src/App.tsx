@@ -45,6 +45,15 @@ function App() {
     }
   };
 
+  const resetForm = () => {
+    setAmount('');
+    setCurrency('USD');
+    setTransactionType('PAYMENT');
+    setResult('SUCCESS');
+    setTransactionId('');
+    setEditingId(null);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -55,65 +64,31 @@ function App() {
 
     try {
       if (editingId) {
-        // Update existing transaction with query parameters
-        const queryParams = new URLSearchParams({
-          amount: amount,
-          currency: currency,
+        await api.updateTransaction(editingId, {
+          amount,
+          currency,
           transactionResult: result
-        }).toString();
-
-        const response = await fetch(
-          `${BASE_URL}/transactions/${editingId}?${queryParams}`, 
-          {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-            }
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error('Failed to update transaction');
-        }
-
-        // Refresh data after successful update
+        });
+        
         fetchTransactions(currentPage);
-        setEditingId(null);
+        resetForm();
       } else {
-        // Create new transaction
-        const response = await fetch(`${BASE_URL}/transactions`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            transactionId: transactionId,
-            transactionType,
-            amount: parseFloat(amount),
-            currency,
-            result
-          }),
+        await api.createTransaction({
+          transactionId,
+          transactionType,
+          amount: parseFloat(amount),
+          currency,
+          result
         });
 
-        if (response.status === 409) {
-          alert('Transaction ID already exists');
-          return;
-        }
-
-        if (!response.ok) {
-          throw new Error('Failed to create transaction');
-        }
-
-        // Only reset form if transaction was created successfully
         fetchTransactions(currentPage);
-        setAmount('');
-        setCurrency('USD');
-        setTransactionType('PAYMENT');
-        setResult('SUCCESS');
-        setTransactionId('');
-        setEditingId(null);
+        resetForm();
       }
     } catch (err) {
+      if (err instanceof Error && err.message === 'Transaction ID already exists') {
+        alert('Transaction ID already exists');
+        return;
+      }
       setError(err instanceof Error ? err.message : 'Failed to save transaction');
     }
   };
